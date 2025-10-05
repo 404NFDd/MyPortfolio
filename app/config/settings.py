@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 import os
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-s-@56c%9*rv8zj7mjwp!l=gcc*iqjpu4z%yfkm7gf6-_w+-kzk')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 # For production, set ALLOWED_HOSTS to your domain(s) to prevent Host header attacks.
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
 # Application definition
 
@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'portfolio',
+    "project_minist",
 ]
 
 MIDDLEWARE = [

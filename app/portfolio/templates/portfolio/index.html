@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+
+<body>
+    <h1>자기소개</h1>
+    <p>안녕하세요, Min입니다.aa (한 줄 소개/기술 키워드)</p>
+
+    <h2>프로젝트</h2>
+    <ul>
+        {% for p in projects %}
+        <li><a href="{% url p.url_name %}">{{ p.name }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>
