@@ -18,7 +18,14 @@ services:
       interval: 10s
       timeout: 3s
       retries: 10
-
+    command: |
+      bash -lc "
+        until pg_isready -h ${POSTGRES_HOST} -p ${POSTGRES_PORT} -U ${POSTGRES_USER}; do
+          echo 'Waiting for Postgres...'; sleep 1;
+        done;
+        python manage.py migrate &&
+        gunicorn config.wsgi:application --bind 0.0.0.0:8000
+      "
   db:
     image: postgres:16
     env_file: .env
