@@ -18,14 +18,7 @@ services:
       interval: 10s
       timeout: 3s
       retries: 10
-    command: |
-      bash -lc "
-        until pg_isready -h ${POSTGRES_HOST} -p ${POSTGRES_PORT} -U ${POSTGRES_USER}; do
-          echo 'Waiting for Postgres...'; sleep 1;
-        done;
-        python manage.py migrate &&
-        gunicorn config.wsgi:application --bind 0.0.0.0:8000
-      "
+
   db:
     image: postgres:16
     env_file: .env
@@ -62,11 +55,13 @@ services:
     working_dir: /frontend
     volumes:
       - ./frontend:/frontend
-    command: sh -lc "npm install && npm run dev -- --host 0.0.0.0"
+    command: sh -lc "npm ci || npm i && npm run dev -- --host 0.0.0.0"
     expose:
       - "5173"
     environment:
       - VITE_PORT=5173
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
 
 volumes:
   static_volume:
