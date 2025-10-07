@@ -1,12 +1,20 @@
-import ApiHealth from "./components/ApiHealth";
+import Header from './components/Header'
+import HeroSection from './components/HeroSection'
+import ProjectsSection from './components/ProjectsSection'
+import Footer from './components/Footer'
+import './App.css'
 
 function App() {
   return (
-    <>
-      <h1>Myportfolio Frontend!@</h1>
-      <ApiHealth />
-    </>
-  );
+    <div>
+      <Header />
+      <main>
+        <HeroSection />
+        <ProjectsSection />
+      </main>
+      <Footer />
+    </div>
+  )
 }
 
-export default App;
+export default App

@@ -1,42 +1,47 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Theme Variables */
+:root {
+  --color-background: #0a0e1a;
+  --color-surface: #141b2d;
+  --color-surface-elevated: #1a2332;
+
+  --color-foreground: #e4e7ec;
+  --color-foreground-muted: #9ca3af;
+  --color-foreground-subtle: #6b7280;
+
+  --color-primary: #3dd9c5;
+  --color-primary-hover: #2bc4b0;
+  --color-accent: #60a5fa;
+
+  --color-border: #1f2937;
+  --color-border-subtle: #374151;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --radius: 0.5rem;
+  --radius-lg: 0.75rem;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+* {
+  box-sizing: border-box;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+body {
+  @apply bg-[var(--color-background)] text-[var(--color-foreground)] font-sans;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+/* Dark mode by default */
+.dark {
+  color-scheme: dark;
 }
