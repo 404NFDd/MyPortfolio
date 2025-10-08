@@ -27,6 +27,10 @@ DEBUG = False
 # For production, set ALLOWED_HOSTS to your domain(s) to prevent Host header attacks.
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8080",
+]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,6 +43,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     'portfolio',
+    "projects",
     "project_minist",
 ]
 
@@ -137,10 +142,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_URL = '/static/'
+STATIC_ROOT = '/static'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = '/media'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

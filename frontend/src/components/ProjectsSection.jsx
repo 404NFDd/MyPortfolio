@@ -1,7 +1,26 @@
-import ProjectCard from './ProjectCard'
-import projectsData from '../data/projects.json'
+import { useEffect, useState } from "react";
+import ProjectCard from "./ProjectCard";
 
 export default function ProjectsSection() {
+    const [items, setItems] = useState([]);
+    const [err, setErr] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+        setLoading(true);
+        fetch("/api/projects/")
+            .then(async (res) => {
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const json = await res.json();
+                const list = Array.isArray(json) ? json : json.results || [];
+                if (!cancelled) setItems(list);
+            })
+            .catch((e) => !cancelled && setErr(e.message))
+            .finally(() => !cancelled && setLoading(false));
+        return () => { cancelled = true; };
+    }, []);
+
     return (
         <section id="projects" className="py-20 bg-surface/30">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,12 +36,14 @@ export default function ProjectsSection() {
                 </div>
 
                 {/* Projects Grid */}
+                {loading && <p>Loading...</p>}
+                {err && <p className="text-red-600">Error: {err}</p>}
                 <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
-                    {(projectsData ?? []).map((project) => (
+                    {items.map((project) => (
                         <ProjectCard key={project.id} project={project} />
                     ))}
                 </div>
             </div>
         </section>
-    )
+    );
 }

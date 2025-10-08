@@ -1,14 +1,20 @@
 import { Github, ExternalLink } from 'lucide-react'
 
 export default function ProjectCard({ project }) {
+    const imgSrc = project.thumbnail || "/placeholder.svg";
+    const githubUrl = project.githubUrl || project.github_url || "#";
+    const liveUrl = project.liveUrl || project.live_url || "#";
+
+    const tags = project.tags ?? [];
     return (
         <article className="group bg-surface rounded-xl overflow-hidden border border-border hover:border-primary transition-all duration-300 hover:shadow-xl hover:shadow-primary/10">
             {/* Thumbnail */}
             <div className="relative aspect-video overflow-hidden bg-surface-elevated">
                 <img
-                    src={project.thumbnail || "/placeholder.svg"}
+                    src={imgSrc}
                     alt={project.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>

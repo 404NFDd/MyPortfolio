@@ -16,3 +16,8 @@ COPY ./app /app
 
 # 헬스체크용 간단 스크립트(나중에 교체 가능)
 CMD ["bash", "-lc", "gunicorn config.wsgi:application --bind 0.0.0.0:8000"]
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential curl netcat-openbsd \
+    libjpeg62-turbo-dev zlib1g-dev libpng-dev libfreetype6-dev \
+    && rm -rf /var/lib/apt/lists/*
