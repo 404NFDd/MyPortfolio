@@ -1,16 +1,26 @@
-import { Github, Linkedin, Mail } from 'lucide-react'
+import { useEffect, useState } from "react";
+import { Github, Linkedin, Mail } from "lucide-react";
 
 export default function HeroSection() {
-    const skills = [
-        'React',
-        'TypeScript',
-        'Node.js',
-        'Tailwind CSS',
-        'Next.js',
-        'PostgreSQL',
-        'Git',
-        'Figma',
-    ]
+    const [profile, setProfile] = useState(null);
+    const [err, setErr] = useState(null);
+
+    useEffect(() => {
+        let cancelled = false;
+        fetch("/api/profile/")
+            .then(async (res) => {
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const json = await res.json();
+                if (!cancelled) setProfile(json);
+            })
+            .catch((e) => !cancelled && setErr(e.message));
+        return () => { cancelled = true; };
+    }, []);
+
+    if (err) return <p className="text-red-600">Error: {err}</p>;
+    if (!profile) return <p>Loading...</p>;
+
+    const { name, email, headline, bio, git_url, linkedin_url, tech_stack = [], location } = profile;
 
     return (
         <section id="about" className="min-h-screen flex items-center pt-16">
@@ -21,17 +31,18 @@ export default function HeroSection() {
                         <div className="space-y-2">
                             <p className="text-primary font-mono text-sm">안녕하세요, 저는</p>
                             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-balance">
-                                Minsuk
+                                {name}
                             </h1>
                             <h2 className="text-2xl sm:text-3xl text-foreground-muted font-light">
-                                Developer
+                                {headline || "Developer"}
                             </h2>
+                            {location && (
+                                <p className="text-sm text-foreground-subtle">{location}</p>
+                            )}
                         </div>
 
                         <p className="text-lg text-foreground-muted leading-relaxed text-pretty">
-                            사용자 경험을 최우선으로 생각하는 프론트엔드 개발자입니다.
-                            접근성과 성능을 고려한 웹 애플리케이션을 만들며,
-                            디자인과 개발의 교차점에서 가치를 창출합니다.
+                            {bio || "자기소개 준비중입니다. 곧 업데이트 예정이니 조금만 기다려주세요!"}
                         </p>
 
                         {/* Skills */}
@@ -40,7 +51,7 @@ export default function HeroSection() {
                                 기술 스택
                             </h3>
                             <div className="flex flex-wrap gap-2">
-                                {skills.map((skill) => (
+                                {(tech_stack ?? []).map((skill) => (
                                     <span
                                         key={skill}
                                         className="px-4 py-2 bg-surface-elevated border border-border rounded-lg text-sm font-medium hover:border-primary transition-colors"
@@ -53,53 +64,58 @@ export default function HeroSection() {
 
                         {/* Social Links */}
                         <div className="flex gap-4 pt-4">
-                            <a
-                                href="https://github.com"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="p-3 bg-surface-elevated hover:bg-primary hover:text-background rounded-lg transition-all duration-200 group"
-                                aria-label="GitHub"
-                            >
-                                <Github className="w-5 h-5" />
-                            </a>
-                            <a
-                                href="https://linkedin.com"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="p-3 bg-surface-elevated hover:bg-primary hover:text-background rounded-lg transition-all duration-200"
-                                aria-label="LinkedIn"
-                            >
-                                <Linkedin className="w-5 h-5" />
-                            </a>
-                            <a
-                                href="mailto:hello@johndoe.com"
-                                className="p-3 bg-surface-elevated hover:bg-primary hover:text-background rounded-lg transition-all duration-200"
-                                aria-label="Email"
-                            >
-                                <Mail className="w-5 h-5" />
-                            </a>
+                            {git_url && (
+                                <a href={git_url} target="_blank" rel="noopener noreferrer"
+                                    className="p-3 bg-surface-elevated hover:bg-primary hover:text-background rounded-lg transition-all duration-200 group"
+                                    aria-label="GitHub">
+                                    <Github className="w-5 h-5" />
+                                </a>
+                            )}
+                            {linkedin_url && (
+                                <a href={linkedin_url} target="_blank" rel="noopener noreferrer"
+                                    className="p-3 bg-surface-elevated hover:bg-primary hover:text-background rounded-lg transition-all duration-200 group"
+                                    aria-label="LinkedIn">
+                                    <Linkedin className="w-5 h-5" />
+                                </a>
+                            )}
+                            {email && (
+                                <a
+                                    href={`mailto:${email}`}
+                                    className="p-3 bg-surface-elevated hover:bg-primary hover:text-background rounded-lg transition-all duration-200"
+                                    aria-label="Email"
+                                >
+                                    <Mail className="w-5 h-5" />
+                                </a>
+                            )}
                         </div>
                     </div>
 
                     {/* Right Content - Profile Image */}
                     <div className="relative">
                         <div className="relative aspect-square max-w-md mx-auto">
-                            {/* Decorative background */}
                             <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl blur-3xl"></div>
-
-                            {/* Image container */}
                             <div className="relative bg-surface-elevated rounded-2xl overflow-hidden border border-border">
                                 <img
-                                    src="/placeholder.svg?height=500&width=500"
-                                    alt="Minsuk"
+                                    src={
+                                        profile.profile_image
+                                            ? profile.profile_image // Django에서 내려온 이미지 URL
+                                            : "/placeholder.svg?height=500&width=500" // 기본 이미지
+                                    }
+                                    alt={name}
                                     className="w-full h-full object-cover"
                                 />
                             </div>
-
-                            {/* Floating badge */}
                             <div className="absolute -bottom-4 -right-4 bg-primary text-background px-6 py-3 rounded-xl font-semibold shadow-lg">
                                 <div className="flex items-center gap-2">
-                                    <span className="w-2 h-2 bg-background rounded-full animate-pulse"></span>
+                                    {/* Online status indicator (green dot) */}
+                                    <span
+                                        className="relative flex w-2 h-2"
+                                        aria-label="Online"
+                                        title="Online"
+                                    >
+                                        <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
+                                        <span className="absolute inset-0 rounded-full bg-emerald-500/40 dark:bg-emerald-400/40 animate-ping" />
+                                    </span>
                                     Available for work
                                 </div>
                             </div>
@@ -108,5 +124,5 @@ export default function HeroSection() {
                 </div>
             </div>
         </section>
-    )
+    );
 }
