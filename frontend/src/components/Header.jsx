@@ -21,6 +21,7 @@ export default function Header() {
 
     const navLinks = [
         { href: '#about', label: '소개' },
+        { href: '#experience', label: '경력' },
         { href: '#projects', label: '프로젝트' },
         { href: '#contact', label: '연락' },
     ]
