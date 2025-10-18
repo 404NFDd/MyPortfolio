@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "corsheaders",
     'portfolio',
     "projects",
-    "project_minist",
+    "project_mnist",
 ]
 
 MIDDLEWARE = [
