@@ -1,0 +1,50 @@
+{
+    "name": "MyPortfolio Django",
+    "dockerComposeFile": [
+        "../docker-compose.yml",
+        "../docker-compose.override.yml"
+    ],
+    "service": "web",
+    "workspaceFolder": "/app",
+    "remoteUser": "root",
+    "forwardPorts": [
+        8000,
+        8080,
+        5173
+    ],
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {},
+        "ghcr.io/devcontainers/features/python:1": {
+            "version": "3.12"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.debugpy",
+                "ms-toolsai.jupyter",
+                "ms-python.isort",
+                "ms-python.black-formatter",
+                "charliermarsh.ruff",
+                "batisteo.vscode-django"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.testing.pytestEnabled": false,
+                "python.testing.unittestEnabled": true,
+                "python.analysis.extraPaths": [
+                    "/app"
+                ],
+                "editor.formatOnSave": true,
+                "python.formatting.provider": "black"
+            }
+        }
+    },
+    "postCreateCommand": "if [ -f /app/requirements.txt ]; then pip install --no-cache-dir -r /app/requirements.txt; elif [ -f /tmp/requirements.txt ]; then pip install --no-cache-dir -r /tmp/requirements.txt; else echo 'No requirements file found'; fi",
+    "updateContentCommand": "if [ -f /app/requirements.txt ]; then pip install --no-cache-dir -r /app/requirements.txt; elif [ -f /tmp/requirements.txt ]; then pip install --no-cache-dir -r /tmp/requirements.txt; else echo 'No requirements file found'; fi",
+    "remoteEnv": {
+        "DJANGO_DEBUG": "1"
+    },
+    "shutdownAction": "stopCompose"
+}
