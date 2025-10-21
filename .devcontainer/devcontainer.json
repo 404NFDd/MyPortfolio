@@ -5,7 +5,7 @@
         "../docker-compose.override.yml"
     ],
     "service": "web",
-    "workspaceFolder": "/app",
+    "workspaceFolder": "/workspace",
     "remoteUser": "root",
     "forwardPorts": [
         8000,
@@ -34,17 +34,20 @@
                 "python.testing.pytestEnabled": false,
                 "python.testing.unittestEnabled": true,
                 "python.analysis.extraPaths": [
-                    "/app"
+                    "/workspace/app"
                 ],
                 "editor.formatOnSave": true,
                 "python.formatting.provider": "black"
             }
         }
     },
-    "postCreateCommand": "if [ -f /app/requirements.txt ]; then pip install --no-cache-dir -r /app/requirements.txt; elif [ -f /tmp/requirements.txt ]; then pip install --no-cache-dir -r /tmp/requirements.txt; else echo 'No requirements file found'; fi",
-    "updateContentCommand": "if [ -f /app/requirements.txt ]; then pip install --no-cache-dir -r /app/requirements.txt; elif [ -f /tmp/requirements.txt ]; then pip install --no-cache-dir -r /tmp/requirements.txt; else echo 'No requirements file found'; fi",
+    "postCreateCommand": "REQ=/workspace/requirements.txt; if [ -f $REQ ]; then pip install --no-cache-dir -r $REQ; else echo 'No requirements file at '$REQ; fi",
+    "updateContentCommand": "REQ=/workspace/requirements.txt; if [ -f $REQ ]; then pip install --no-cache-dir -r $REQ; else echo 'No requirements file at '$REQ; fi",
     "remoteEnv": {
         "DJANGO_DEBUG": "1"
     },
-    "shutdownAction": "stopCompose"
+    "shutdownAction": "stopCompose",
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/workspace,type=bind"
+    ]
 }

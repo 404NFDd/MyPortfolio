@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Install dependencies if Django not importable (e.g. volume replaced after build)
-REQ_FILE="/app/requirements.txt"
+REQ_FILE="/workspace/requirements.txt"
 FALLBACK_REQ="/tmp/requirements.txt"
 
 if ! python - <<'PY'
@@ -23,6 +23,7 @@ then
 fi
 
 # Apply migrations (optional safe guard)
+cd /workspace/app || { echo "[entrypoint] ERROR: /workspace/app not found" >&2; exit 1; }
 python manage.py migrate --noinput || echo "[entrypoint] Migrate failed (may be initial build)."
 
 exec "$@"
