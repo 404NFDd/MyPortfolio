@@ -11,16 +11,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /workspace/app
-# Copy root requirements for build layer; keep a copy at /workspace/requirements.txt
+# Copy root requirements (build layer) and duplicate into /workspace for dev commands
 COPY requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir -r /tmp/requirements.txt && mkdir -p /workspace && cp /tmp/requirements.txt /workspace/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt \
+    && mkdir -p /workspace \
+    && cp /tmp/requirements.txt /workspace/requirements.txt
 
 COPY ./app /workspace/app
 
-# Add entrypoint script for dev/runtime convenience
+# Entrypoint script
 COPY app/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.sh
 
-# Default command (can be overridden by docker-compose.override.yml for runserver)
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["bash", "-lc", "gunicorn config.wsgi:application --chdir /workspace/app --bind 0.0.0.0:8000 config.wsgi:application"]

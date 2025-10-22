@@ -27,5 +27,5 @@ urlpatterns = [
     #index page - My Portfolio
     path("", include(("portfolio.urls", "portfolio"), namespace="portfolio")),
     path("api/", include(("projects.urls", "projects"), namespace="projects")), # Project API
-    path("projects/mnist/", include(("project_mnist.urls", "project_mnist"), namespace="project_mnist")),
+    path("projects/minist/", include(("project_minist.urls", "project_minist"), namespace="project_minist")),
 ]
