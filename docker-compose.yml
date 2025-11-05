@@ -18,6 +18,12 @@ services:
       interval: 10s
       timeout: 3s
       retries: 10
+    restart: unless-stopped
+    environment:
+      # Allow overriding via .env; defaults primarily for local dev
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-0}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
+      DJANGO_CSRF_TRUSTED_ORIGINS: ${DJANGO_CSRF_TRUSTED_ORIGINS:-http://localhost:8080,http://localhost:5173}
 
   db:
     image: postgres:16
@@ -33,12 +39,14 @@ services:
       interval: 10s
       timeout: 3s
       retries: 10
+    restart: unless-stopped
 
   redis:
     image: redis:alpine
     command: ["redis-server"]
     volumes:
       - ./data/redis:/data
+    restart: unless-stopped
 
   nginx:
     image: nginx:alpine
@@ -50,6 +58,7 @@ services:
       - media_volume:/media:ro
     ports:
       - "8080:80"
+    restart: unless-stopped
   frontend:
     image: node:22-alpine
     working_dir: /frontend
@@ -62,6 +71,7 @@ services:
       - VITE_PORT=5173
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
+    restart: unless-stopped
 
 volumes:
   static_volume:

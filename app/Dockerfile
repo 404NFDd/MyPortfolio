@@ -19,7 +19,7 @@ COPY ./app /app
 
 # Add entrypoint script for dev/runtime convenience
 COPY app/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.sh
 
 # Default command (can be overridden by docker-compose.override.yml for runserver)
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

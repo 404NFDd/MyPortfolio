@@ -25,4 +25,10 @@ fi
 # Apply migrations (optional safe guard)
 python manage.py migrate --noinput || echo "[entrypoint] Migrate failed (may be initial build)."
 
+# Collect static files in non-debug mode to ensure nginx can serve them.
+if [ "${DJANGO_DEBUG:-0}" != "1" ]; then
+  echo "[entrypoint] Collecting static files..."
+  python manage.py collectstatic --noinput || echo "[entrypoint] collectstatic failed"
+fi
+
 exec "$@"

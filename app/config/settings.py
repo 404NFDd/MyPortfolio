@@ -21,15 +21,33 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 import os
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-s-@56c%9*rv8zj7mjwp!l=gcc*iqjpu4z%yfkm7gf6-_w+-kzk')
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-# For production, set ALLOWED_HOSTS to your domain(s) to prevent Host header attacks.
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:8080",
-]
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-s-@56c%9*rv8zj7mjwp!l=gcc*iqjpu4z%yfkm7gf6-_w+-kzk'
+)
+
+def env_bool(name: str, default: bool = False) -> bool:
+    val = os.getenv(name)
+    if val is None:
+        return default
+    return val.lower() in {"1", "true", "yes", "on"}
+
+# DEBUG controlled by DJANGO_DEBUG env ("1|true|yes|on" truthy)
+DEBUG = env_bool("DJANGO_DEBUG", default=False)
+
+# ALLOWED_HOSTS: comma separated in DJANGO_ALLOWED_HOSTS. When DEBUG true, include localhost conveniences.
+_default_hosts = "localhost,127.0.0.1" if DEBUG else ""
+ALLOWED_HOSTS = [h.strip() for h in os.getenv("DJANGO_ALLOWED_HOSTS", _default_hosts).split(",") if h.strip()]
+if DEBUG and not ALLOWED_HOSTS:
+    # Fallback safeguard for local dev so Django starts.
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+
+# CSRF trusted origins (comma separated) DJANGO_CSRF_TRUSTED_ORIGINS
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in os.getenv(
+    "DJANGO_CSRF_TRUSTED_ORIGINS",
+    "http://localhost:8080,http://localhost:5173"
+).split(",") if o.strip()]
 
 # Application definition
 
@@ -40,22 +58,24 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "rest_framework",
-    "corsheaders",
+    'rest_framework',
+    'corsheaders',
     'portfolio',
-    "projects",
-    "project_minist",
+    'projects',
+    # Corrected app name (was project_minist typo -> mnist)
+    'project_mnist',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # Place CORS early so it can add headers before CommonMiddleware / CSRF.
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -79,6 +99,10 @@ TEMPLATES = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
+# Allow overriding with comma separated origins.
+_cors_extra = os.getenv("DJANGO_CORS_ALLOWED_ORIGINS")
+if _cors_extra:
+    CORS_ALLOWED_ORIGINS.extend([o.strip() for o in _cors_extra.split(",") if o.strip()])
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -92,16 +116,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+_db_password = os.getenv("POSTGRES_PASSWORD")
+if not _db_password:
+    raise RuntimeError("POSTGRES_PASSWORD environment variable must be set for database connection.")
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("POSTGRES_DB", "myportfolio"),
         "USER": os.getenv("POSTGRES_USER", "myportfolio"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD") or (
-            lambda: (_ for _ in ()).throw(
-                RuntimeError("POSTGRES_PASSWORD environment variable must be set for database connection.")
-            )
-        )(),
+        "PASSWORD": _db_password,
         "HOST": os.getenv("POSTGRES_HOST", "db"),
         "PORT": int(os.getenv("POSTGRES_PORT", "5432")),
         "CONN_MAX_AGE": 60,

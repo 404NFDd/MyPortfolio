@@ -6,7 +6,7 @@ from .serializers import ProfileSerializer
 
 def index(request):
     projects = [
-        {"name": "MINIST 데모", "url_name": "project_minist:index"},
+        {"name": "MNIST 데모", "url_name": "project_mnist:index"},
     ]
     return render(request, "portfolio/index.html", {"projects": projects})
 
