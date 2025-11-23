@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.http import JsonResponse
+from django.conf import settings
+from django.conf.urls.static import static
 
 def api_health(request):
     return JsonResponse({"ok": True, "service": "django", "status": "healthy"})
@@ -30,3 +32,8 @@ urlpatterns = [
     # MNIST demo project routes (typo 'minist' corrected)
     path("projects/mnist/", include(("project_mnist.urls", "project_mnist"), namespace="project_mnist")),
 ]
+
+# Serve static and media files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
