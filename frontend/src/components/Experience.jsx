@@ -2,10 +2,24 @@
 import { Briefcase, Calendar } from "lucide-react"
 const experiences = [
     {
+        "id": 2,
+        "company": "JRYN 의원",
+        "position": "Developer",
+        "period": "2026.06 ~ 현재",
+        "description": "병원 CRM 등 업무 시스템과 웹 서비스 개발 및 개선",
+        "achievements": [
+            "병원 CRM의 예약 및 수납 흐름과 조회 성능 개선, API 응답과 회귀 테스트 정비",
+            "Laravel 기반 다국어 서비스의 콘텐츠 관리, 상담 동선, 모바일·태블릿 화면 개선",
+            "페이지 빌더의 편집·저장·게시 흐름과 데이터 수집 자동화 고도화",
+            "AI 에이전트의 맥락 관리와 역할 분담, 검증 절차를 정리해 반복 적용 가능한 개발 흐름 구축"
+        ],
+        "technologies": ["Java (Spring Boot)", "PHP (Laravel)", "MySQL", "React", "Next.js", "Python"]
+    },
+    {
         "id": 1,
         "company": "WDB",
         "position": "Junior Developer",
-        "period": "2023.10 ~ 현재",
+        "period": "2023.10 ~ 2026.02",
         "description": "신규 플랫폼 개발 및 기존 시스템 유지보수 업무 수행",
         "achievements": [
             "Laravel(PHP) 기반의 배치 모듈 39건 신규 설계 및 구현, 월 3건 이상 유지 개발",
@@ -41,7 +55,7 @@ export default function Experience() {
 
                     {/* Experience Items */}
                     <div className="space-y-12">
-                        {experiences.map((exp, index) => (
+                        {experiences.map((exp) => (
                             <div key={exp.id} className="relative">
                                 {/* Timeline Dot */}
                                 <div className="absolute left-0 md:left-8 -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background hidden sm:block" />

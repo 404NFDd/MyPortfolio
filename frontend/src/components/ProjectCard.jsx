@@ -1,9 +1,10 @@
-import { Github, ExternalLink } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
+import { Github } from './BrandIcons'
 
 export default function ProjectCard({ project }) {
     const imgSrc = project.thumbnail || "/placeholder.svg";
-    const githubUrl = project.githubUrl || project.github_url || "#";
-    const liveUrl = project.liveUrl || project.live_url || "#";
+    const githubUrl = project.githubUrl || project.github_url;
+    const liveUrl = project.liveUrl || project.live_url;
 
     const tags = project.tags ?? [];
     return (
@@ -31,17 +32,19 @@ export default function ProjectCard({ project }) {
 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2">
-                    {(project.tags ?? []).map(tag => (
+                    {tags.map(tag => (
                         <span key={tag} className="px-3 py-1 bg-surface-elevated text-primary text-xs font-medium rounded-full border border-border">
                             {tag}
                         </span>
                     ))}
                 </div>
 
-                {/* Links */}
+                {/* Links (URL이 있는 것만 표시) */}
+                {(githubUrl || liveUrl) && (
                 <div className="flex gap-3 pt-2">
+                    {githubUrl && (
                     <a
-                        href={project.githubUrl}
+                        href={githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 px-4 py-2 bg-surface-elevated hover:bg-border rounded-lg text-sm font-medium transition-colors group/link"
@@ -49,8 +52,10 @@ export default function ProjectCard({ project }) {
                         <Github className="w-4 h-4" />
                         <span>GitHub</span>
                     </a>
+                    )}
+                    {liveUrl && (
                     <a
-                        href={project.liveUrl}
+                        href={liveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-background rounded-lg text-sm font-medium transition-colors group/link"
@@ -58,7 +63,9 @@ export default function ProjectCard({ project }) {
                         <span>자세히 보기</span>
                         <ExternalLink className="w-4 h-4 transition-transform group-hover/link:translate-x-1" />
                     </a>
+                    )}
                 </div>
+                )}
             </div>
         </article>
     )

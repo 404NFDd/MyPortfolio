@@ -207,7 +207,8 @@ marimo/_lsp/
 __marimo__/
 *.pyc
 .env.*
-/data/
+/data/*
+!/data/seed/
 /venv/
 /.venv/
 *.sqlite3
@@ -215,3 +216,6 @@ __marimo__/
 .vscode/
 dist/
 /app/static/
+
+# markdown
+*.md

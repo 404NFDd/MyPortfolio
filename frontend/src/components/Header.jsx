@@ -38,7 +38,7 @@ export default function Header() {
                         <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center font-bold text-background transition-transform group-hover:scale-110">
                             MS
                         </div>
-                        <span className="font-semibold text-lg hidden sm:block">Minsuk</span>
+                        <span className="font-semibold text-lg hidden sm:block">Minseok</span>
                     </a>
 
                     {/* Desktop Navigation */}

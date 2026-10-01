@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Github, Linkedin, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
+import { Github, Linkedin } from "./BrandIcons";
 
 export default function HeroSection() {
     const [profile, setProfile] = useState(null);
@@ -20,10 +21,17 @@ export default function HeroSection() {
     if (err) return <p className="text-red-600">Error: {err}</p>;
     if (!profile) return <p>Loading...</p>;
 
-    const { name, email, headline, bio, git_url, linkedin_url, tech_stack = [], location } = profile;
+    const { name, email, headline, bio, git_url, linkedin_url, tech_stack = [], location, hero_background } = profile;
 
     return (
-        <section id="about" className="min-h-screen flex items-center pt-16">
+        <section id="about" className="relative isolate overflow-hidden min-h-screen flex items-center pt-16">
+            {/* Background */}
+            {hero_background && (
+                <div aria-hidden="true" className="absolute inset-0 -z-10">
+                    <img src={hero_background} alt="" className="w-full h-full object-cover opacity-30" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background" />
+                </div>
+            )}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
                 <div className="grid lg:grid-cols-2 gap-12 items-center">
                     {/* Left Content */}
@@ -51,14 +59,26 @@ export default function HeroSection() {
                                 기술 스택
                             </h3>
                             <div className="flex flex-wrap gap-2">
-                                {(tech_stack ?? []).map((skill) => (
-                                    <span
-                                        key={skill}
-                                        className="px-4 py-2 bg-surface-elevated border border-border rounded-lg text-sm font-medium hover:border-primary transition-colors"
-                                    >
-                                        {skill}
-                                    </span>
-                                ))}
+                                {(tech_stack ?? []).map((skill) => {
+                                    // 문자열("PHP") 또는 객체({ name, icon }) 모두 지원
+                                    const { name: label, icon } = typeof skill === "string" ? { name: skill } : skill;
+                                    return (
+                                        <span
+                                            key={label}
+                                            className="inline-flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border rounded-lg text-sm font-medium hover:border-primary transition-colors"
+                                        >
+                                            {icon && (
+                                                // 아이콘을 마스크로 써서 테마 글자색(단색)으로 표시
+                                                <span
+                                                    aria-hidden="true"
+                                                    className="w-4 h-4 shrink-0 bg-current"
+                                                    style={{ mask: `url(${icon}) center / contain no-repeat` }}
+                                                />
+                                            )}
+                                            {label}
+                                        </span>
+                                    );
+                                })}
                             </div>
                         </div>
 

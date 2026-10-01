@@ -1,0 +1,72 @@
+[
+  {
+    "title": "NewsHub",
+    "description": "뉴스 자동 수집과 중복 제거, Gemini 요약, 이메일 브리핑, JWT 인증을 구현한 뉴스 대시보드",
+    "tags": [
+      "Next.js",
+      "TypeScript",
+      "Prisma",
+      "MySQL"
+    ],
+    "github_url": "https://github.com/404NFDd/firstproject",
+    "thumbnail": "projects/firstproject.png"
+  },
+  {
+    "title": "Ai-Agent-smarter",
+    "description": "프로젝트 규칙과 작업 기억, 에이전트 역할 분담, 검증 흐름을 구성해 AI와의 개발 과정을 조율하는 운영 템플릿",
+    "tags": [
+      "Markdown",
+      "PowerShell",
+      "작업 자동화"
+    ],
+    "github_url": "https://github.com/404NFDd/Ai-Agent-smarter",
+    "thumbnail": "projects/Ai-Agent-smarter.png"
+  },
+  {
+    "title": "MyPortfolio",
+    "description": "API와 프론트엔드를 분리하고 Docker Compose와 Nginx로 개발 환경을 구성한 개인 포트폴리오",
+    "tags": [
+      "Django",
+      "React",
+      "PostgreSQL",
+      "Redis",
+      "Docker"
+    ],
+    "github_url": "https://github.com/404NFDd/MyPortfolio",
+    "thumbnail": "projects/MyPortfolio.png"
+  },
+  {
+    "title": "MNIST FCM Classifier",
+    "description": "Fuzzy C-Means와 SVM을 활용한 손글씨 숫자 인식 모델 구현. 포트폴리오 사이트 안에 데모 페이지 포함",
+    "tags": [
+      "Python",
+      "libSVM"
+    ],
+    "github_url": "https://github.com/404NFDd/MyPortfolio",
+    "thumbnail": "projects/mnist.png"
+  },
+  {
+    "title": "블록형 페이지 빌더",
+    "description": "편집기, API, 공개 렌더러를 분리한 모노레포, 자유 배치 편집, 초안 저장 및 게시 API, 공유 문서 스키마 구현",
+    "tags": [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "NestJS",
+      "PostgreSQL"
+    ],
+    "thumbnail": "projects/page-builder.png"
+  },
+  {
+    "title": "병원 쇼핑몰 기반 구축",
+    "description": "관리자·사용자·공통 영역 분리, 공지사항 CRUD와 인증 인터셉터, 사용자 메인 화면 및 WAR 배포 구성",
+    "tags": [
+      "Java",
+      "Spring MVC",
+      "MyBatis",
+      "MySQL",
+      "JSP"
+    ],
+    "thumbnail": "projects/hospital-mall.png"
+  }
+]

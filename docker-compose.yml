@@ -9,6 +9,7 @@ services:
         condition: service_healthy
     volumes:
       - ./app:/app
+      - ./data/seed:/seed:ro
       - static_volume:/static
       - media_volume:/media
     expose:
@@ -50,27 +51,40 @@ services:
 
   nginx:
     image: nginx:alpine
+    # nginx는 시작 시 upstream(web, frontend) 이름을 해석하므로 둘 다 준비된 뒤에 띄운다.
     depends_on:
-      - web
+      web:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - static_volume:/static:ro
       - media_volume:/media:ro
     ports:
-      - "8080:80"
+      - "${NGINX_PORT:-8080}:80"
     restart: unless-stopped
   frontend:
     image: node:22-alpine
     working_dir: /frontend
     volumes:
       - ./frontend:/frontend
+      # 호스트(Windows)의 node_modules와 컨테이너(Linux)용 네이티브 바이너리가 섞이지 않도록 분리
+      - /frontend/node_modules
     command: sh -lc "npm ci || npm i && npm run dev -- --host 0.0.0.0"
     expose:
       - "5173"
     environment:
       - VITE_PORT=5173
+      - VITE_HMR_CLIENT_PORT=${NGINX_PORT:-8080}
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:5173/ || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 120s
     restart: unless-stopped
 
 volumes:

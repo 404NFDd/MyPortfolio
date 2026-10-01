@@ -4,11 +4,10 @@ import ProjectCard from "./ProjectCard";
 export default function ProjectsSection() {
     const [items, setItems] = useState([]);
     const [err, setErr] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         let cancelled = false;
-        setLoading(true);
         fetch("/api/projects/")
             .then(async (res) => {
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);

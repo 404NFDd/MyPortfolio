@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Github, Linkedin, Mail, Heart } from 'lucide-react'
+import { Mail, Heart } from 'lucide-react'
+import { Github, Linkedin } from './BrandIcons'
 
 export default function Footer() {
     const [profile, setProfile] = useState(null);
@@ -20,7 +21,7 @@ export default function Footer() {
     if (err) return <p className="text-red-600">Error: {err}</p>;
     if (!profile) return <p>Loading...</p>;
 
-    const { name, email, git_url, linkedin_url, tech_stack = [], location } = profile
+    const { email, git_url, linkedin_url } = profile
         , currentYear = new Date().getFullYear();
 
     return (
@@ -77,7 +78,7 @@ export default function Footer() {
                 {/* Bottom */}
                 <div className="pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
                     <p className="text-foreground-subtle text-sm">
-                        © {currentYear} Minsuk. All rights reserved.
+                        © {currentYear} Minseok. All rights reserved.
                     </p>
                     <p className="text-foreground-subtle text-sm flex items-center gap-1">
                         Made with <Heart className="w-4 h-4 text-primary fill-primary" /> using React & Tailwind CSS

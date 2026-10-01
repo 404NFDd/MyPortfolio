@@ -3,11 +3,10 @@ import { useEffect, useState } from "react";
 export default function ApiHealth() {
     const [data, setData] = useState(null);
     const [err, setErr] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         let cancelled = false;
-        setLoading(true);
         fetch("/api/health/")
             .then(async (res) => {
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);

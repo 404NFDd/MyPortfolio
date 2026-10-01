@@ -9,6 +9,7 @@ class Profile(models.Model):
     bio = models.TextField(blank=True)                       # 자기소개 문단
     tech_stack = models.JSONField(default=list, blank=True)  # 기술스택 리스트
     profile_image = models.ImageField(upload_to="profile/", blank=True, null=True)  # 프로필 이미지
+    hero_background = models.ImageField(upload_to="profile/", blank=True, null=True)  # 히어로 섹션 배경 이미지
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
