@@ -1,72 +1,47 @@
-import { ExternalLink } from 'lucide-react'
-import { Github } from './BrandIcons'
+import Reveal from "./Reveal"
 
-export default function ProjectCard({ project }) {
+export default function ProjectCard({ project, index }) {
     const imgSrc = project.thumbnail || "/placeholder.svg";
     const githubUrl = project.githubUrl || project.github_url;
     const liveUrl = project.liveUrl || project.live_url;
 
     const tags = project.tags ?? [];
     return (
-        <article className="group bg-surface rounded-xl overflow-hidden border border-border hover:border-primary transition-all duration-300 hover:shadow-xl hover:shadow-primary/10">
+        <Reveal as="article" delay={(index % 3) * 90} className="group flex flex-col gap-3">
             {/* Thumbnail */}
-            <div className="relative aspect-video overflow-hidden bg-surface-elevated">
+            <div className="aspect-video overflow-hidden bg-border/40">
                 <img
                     src={imgSrc}
                     alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                     loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
 
             {/* Content */}
-            <div className="p-6 space-y-4">
-                <h3 className="text-xl font-bold text-balance group-hover:text-primary transition-colors">
-                    {project.title}
-                </h3>
-
-                <p className="text-foreground-muted text-sm leading-relaxed text-pretty">
-                    {project.description}
+            <div className="flex flex-col gap-2">
+                <p className="label text-muted-foreground">
+                    {String(index + 1).padStart(2, "0")}{tags.length > 0 && ` — ${tags.join(" / ")}`}
                 </p>
+                <h3 className="text-[30px] leading-[1.13]">{project.title}</h3>
+                <p className="text-muted-foreground max-w-[60ch]">{project.description}</p>
+            </div>
 
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2">
-                    {tags.map(tag => (
-                        <span key={tag} className="px-3 py-1 bg-surface-elevated text-primary text-xs font-medium rounded-full border border-border">
-                            {tag}
-                        </span>
-                    ))}
-                </div>
-
-                {/* Links (URL이 있는 것만 표시) */}
-                {(githubUrl || liveUrl) && (
-                <div className="flex gap-3 pt-2">
+            {/* Links (URL이 있는 것만 표시) */}
+            {(githubUrl || liveUrl) && (
+                <div className="flex flex-wrap gap-1">
                     {githubUrl && (
-                    <a
-                        href={githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-4 py-2 bg-surface-elevated hover:bg-border rounded-lg text-sm font-medium transition-colors group/link"
-                    >
-                        <Github className="w-4 h-4" />
-                        <span>GitHub</span>
-                    </a>
+                        <a href={githubUrl} target="_blank" rel="noopener noreferrer" className="pill">
+                            Github <span className="arrow">↗</span>
+                        </a>
                     )}
                     {liveUrl && (
-                    <a
-                        href={liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-background rounded-lg text-sm font-medium transition-colors group/link"
-                    >
-                        <span>자세히 보기</span>
-                        <ExternalLink className="w-4 h-4 transition-transform group-hover/link:translate-x-1" />
-                    </a>
+                        <a href={liveUrl} target="_blank" rel="noopener noreferrer" className="pill">
+                            Live <span className="arrow">↗</span>
+                        </a>
                     )}
                 </div>
-                )}
-            </div>
-        </article>
+            )}
+        </Reveal>
     )
 }

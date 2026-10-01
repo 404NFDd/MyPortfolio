@@ -1,10 +1,30 @@
 import { useEffect, useState } from "react";
-import { Mail } from "lucide-react";
-import { Github, Linkedin } from "./BrandIcons";
+import { useScramble } from "../motion";
+
+const timeFormat = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Seoul",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+});
+
+// 서울 기준 실시간 시계 (예: "10:40" + "PM")
+function useSeoulTime() {
+    const [now, setNow] = useState(() => new Date());
+    useEffect(() => {
+        const id = setInterval(() => setNow(new Date()), 1000);
+        return () => clearInterval(id);
+    }, []);
+    const parts = timeFormat.formatToParts(now);
+    const get = (type) => parts.find((p) => p.type === type)?.value ?? "";
+    return { hour: get("hour"), minute: get("minute"), period: get("dayPeriod") };
+}
 
 export default function HeroSection() {
     const [profile, setProfile] = useState(null);
     const [err, setErr] = useState(null);
+    const { hour, minute, period } = useSeoulTime();
+    const [scrambledName, replayName] = useScramble(profile?.name ?? "", { delay: 250 });
 
     useEffect(() => {
         let cancelled = false;
@@ -18,128 +38,109 @@ export default function HeroSection() {
         return () => { cancelled = true; };
     }, []);
 
-    if (err) return <p className="text-red-600">Error: {err}</p>;
-    if (!profile) return <p>Loading...</p>;
+    if (err || !profile) {
+        return (
+            <section id="about" className="min-h-svh flex items-end px-3 sm:px-6 pb-6">
+                <p className="label">{err ? `Error: ${err}` : "Loading profile..."}</p>
+            </section>
+        );
+    }
 
-    const { name, email, headline, bio, git_url, linkedin_url, tech_stack = [], location, hero_background } = profile;
+    const { name, email, headline, bio, git_url, linkedin_url, tech_stack = [], location, hero_background, profile_image } = profile;
+
+    const links = [
+        git_url && { href: git_url, label: "Github", external: true },
+        linkedin_url && { href: linkedin_url, label: "LinkedIn", external: true },
+        email && { href: `mailto:${email}`, label: "Email" },
+    ].filter(Boolean);
 
     return (
-        <section id="about" className="relative isolate overflow-hidden min-h-screen flex items-center pt-16">
+        <section id="about" className="relative isolate overflow-hidden min-h-svh flex flex-col justify-between gap-16 px-3 sm:px-6 pt-20 pb-6">
             {/* Background */}
             {hero_background && (
                 <div aria-hidden="true" className="absolute inset-0 -z-10">
-                    <img src={hero_background} alt="" className="w-full h-full object-cover opacity-30" />
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background" />
+                    <img src={hero_background} alt="" className="w-full h-full object-cover opacity-40" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
                 </div>
             )}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                    {/* Left Content */}
-                    <div className="space-y-6">
-                        <div className="space-y-2">
-                            <p className="text-primary font-mono text-sm">안녕하세요, 저는</p>
-                            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-balance">
-                                {name}
-                            </h1>
-                            <h2 className="text-2xl sm:text-3xl text-foreground-muted font-light">
-                                {headline || "Developer"}
-                            </h2>
-                            {location && (
-                                <p className="text-sm text-foreground-subtle">{location}</p>
-                            )}
-                        </div>
 
-                        <p className="text-lg text-foreground-muted leading-relaxed text-pretty">
-                            {bio || "자기소개 준비중입니다. 곧 업데이트 예정이니 조금만 기다려주세요!"}
-                        </p>
+            {/* Top: 시계 / 상태 */}
+            <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="flex flex-col gap-1 fade-in" style={{ "--d": "100ms" }}>
+                    <p className="label text-muted-foreground">Local time (UTC+9:00)</p>
+                    <p className="font-display text-[80px] leading-[0.7] pt-3" aria-label={`서울 현재 시각 ${hour}:${minute} ${period}`}>
+                        {hour}<span className="blink">:</span>{minute}<span className="text-[30px] ml-1">{period}</span>
+                    </p>
+                    <p className="label text-muted-foreground pt-2">{location || "Seoul, KR"}</p>
+                </div>
+                <p className="label flex items-center gap-2 fade-in" style={{ "--d": "200ms" }}>
+                    <span className="w-2 h-2 rounded-full bg-accent animate-pulse" aria-hidden="true" />
+                    Available for work
+                </p>
+            </div>
 
-                        {/* Skills */}
-                        <div className="space-y-3">
-                            <h3 className="text-sm font-semibold text-foreground-subtle uppercase tracking-wider">
-                                기술 스택
-                            </h3>
-                            <div className="flex flex-wrap gap-2">
-                                {(tech_stack ?? []).map((skill) => {
-                                    // 문자열("PHP") 또는 객체({ name, icon }) 모두 지원
-                                    const { name: label, icon } = typeof skill === "string" ? { name: skill } : skill;
-                                    return (
-                                        <span
-                                            key={label}
-                                            className="inline-flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border rounded-lg text-sm font-medium hover:border-primary transition-colors"
-                                        >
-                                            {icon && (
-                                                // 아이콘을 마스크로 써서 테마 글자색(단색)으로 표시
-                                                <span
-                                                    aria-hidden="true"
-                                                    className="w-4 h-4 shrink-0 bg-current"
-                                                    style={{ mask: `url(${icon}) center / contain no-repeat` }}
-                                                />
-                                            )}
-                                            {label}
-                                        </span>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        {/* Social Links */}
-                        <div className="flex gap-4 pt-4">
-                            {git_url && (
-                                <a href={git_url} target="_blank" rel="noopener noreferrer"
-                                    className="p-3 bg-surface-elevated hover:bg-primary hover:text-background rounded-lg transition-all duration-200 group"
-                                    aria-label="GitHub">
-                                    <Github className="w-5 h-5" />
-                                </a>
-                            )}
-                            {linkedin_url && (
-                                <a href={linkedin_url} target="_blank" rel="noopener noreferrer"
-                                    className="p-3 bg-surface-elevated hover:bg-primary hover:text-background rounded-lg transition-all duration-200 group"
-                                    aria-label="LinkedIn">
-                                    <Linkedin className="w-5 h-5" />
-                                </a>
-                            )}
-                            {email && (
-                                <a
-                                    href={`mailto:${email}`}
-                                    className="p-3 bg-surface-elevated hover:bg-primary hover:text-background rounded-lg transition-all duration-200"
-                                    aria-label="Email"
-                                >
-                                    <Mail className="w-5 h-5" />
-                                </a>
-                            )}
-                        </div>
+            {/* Bottom: 소개 / 링크 */}
+            <div className="grid lg:grid-cols-[minmax(0,1fr)_auto] gap-8 items-end">
+                <div className="flex flex-col gap-3">
+                    <div className="flex items-end gap-3 fade-in" style={{ "--d": "150ms" }}>
+                        {profile_image && (
+                            <img src={profile_image} alt={name} className="w-16 h-16 object-cover grayscale" />
+                        )}
+                        <p className="label text-muted-foreground">안녕하세요, 저는</p>
                     </div>
+                    <h1
+                        className="rise font-display text-[clamp(64px,12vw,160px)] leading-[0.7] pt-2 cursor-default"
+                        aria-label={name}
+                        onMouseEnter={() => replayName()}
+                    >
+                        <span aria-hidden="true" style={{ "--d": "200ms" }}>{scrambledName}</span>
+                    </h1>
+                    <h2 className="rise text-[22px] sm:text-[30px] leading-[1.13] max-w-[28ch] pt-2">
+                        <span style={{ "--d": "380ms" }}>{headline || "Developer"}</span>
+                    </h2>
+                    <p className="max-w-[60ch] leading-[1.25] text-muted-foreground fade-in" style={{ "--d": "520ms" }}>
+                        {bio || "자기소개 준비중입니다. 곧 업데이트 예정이니 조금만 기다려주세요!"}
+                    </p>
+                </div>
 
-                    {/* Right Content - Profile Image */}
-                    <div className="relative">
-                        <div className="relative aspect-square max-w-md mx-auto">
-                            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl blur-3xl"></div>
-                            <div className="relative bg-surface-elevated rounded-2xl overflow-hidden border border-border">
-                                <img
-                                    src={
-                                        profile.profile_image
-                                            ? profile.profile_image // Django에서 내려온 이미지 URL
-                                            : "/placeholder.svg?height=500&width=500" // 기본 이미지
-                                    }
-                                    alt={name}
-                                    className="w-full h-full object-cover"
-                                />
-                            </div>
-                            <div className="absolute -bottom-4 -right-4 bg-primary text-background px-6 py-3 rounded-xl font-semibold shadow-lg">
-                                <div className="flex items-center gap-2">
-                                    {/* Online status indicator (green dot) */}
-                                    <span
-                                        className="relative flex w-2 h-2"
-                                        aria-label="Online"
-                                        title="Online"
-                                    >
-                                        <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
-                                        <span className="absolute inset-0 rounded-full bg-emerald-500/40 dark:bg-emerald-400/40 animate-ping" />
-                                    </span>
-                                    Available for work
-                                </div>
-                            </div>
+                <div className="flex flex-col gap-4 lg:items-end fade-in" style={{ "--d": "650ms" }}>
+                    {links.length > 0 && (
+                        <div className="flex flex-wrap gap-1 lg:justify-end">
+                            {links.map((link) => (
+                                <a
+                                    key={link.label}
+                                    href={link.href}
+                                    className="pill"
+                                    {...(link.external && { target: "_blank", rel: "noopener noreferrer" })}
+                                >
+                                    {link.label} <span className="arrow">↗</span>
+                                </a>
+                            ))}
                         </div>
+                    )}
+
+                    {/* Skills */}
+                    <div className="flex flex-col gap-2 lg:items-end">
+                        <p className="label text-muted-foreground">Stack / {String(tech_stack.length).padStart(2, "0")}</p>
+                        <ul className="flex flex-wrap gap-1 lg:justify-end max-w-[520px]">
+                            {tech_stack.map((skill) => {
+                                // 문자열("PHP") 또는 객체({ name, icon }) 모두 지원
+                                const { name: label, icon } = typeof skill === "string" ? { name: skill } : skill;
+                                return (
+                                    <li key={label} className="pill hover:bg-transparent hover:text-foreground">
+                                        {icon && (
+                                            // 아이콘을 마스크로 써서 테마 글자색(단색)으로 표시
+                                            <span
+                                                aria-hidden="true"
+                                                className="w-3 h-3 shrink-0 bg-current"
+                                                style={{ mask: `url(${icon}) center / contain no-repeat` }}
+                                            />
+                                        )}
+                                        {label}
+                                    </li>
+                                );
+                            })}
+                        </ul>
                     </div>
                 </div>
             </div>

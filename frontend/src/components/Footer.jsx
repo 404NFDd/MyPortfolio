@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Mail, Heart } from 'lucide-react'
-import { Github, Linkedin } from './BrandIcons'
+import Reveal from "./Reveal";
 
 export default function Footer() {
     const [profile, setProfile] = useState(null);
@@ -18,72 +17,49 @@ export default function Footer() {
         return () => { cancelled = true; };
     }, []);
 
-    if (err) return <p className="text-red-600">Error: {err}</p>;
-    if (!profile) return <p>Loading...</p>;
+    if (err) return <p className="label px-3 sm:px-6 py-6">Error: {err}</p>;
+    if (!profile) return null;
 
     const { email, git_url, linkedin_url } = profile
         , currentYear = new Date().getFullYear();
 
+    const links = [
+        git_url && { href: git_url, label: "Github", external: true },
+        linkedin_url && { href: linkedin_url, label: "LinkedIn", external: true },
+        email && { href: `mailto:${email}`, label: "Email" },
+    ].filter(Boolean);
+
     return (
-        <footer id="contact" className="bg-surface border-t border-border">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="grid md:grid-cols-2 gap-8 mb-8">
-                    {/* Left - Contact Info */}
-                    <div className="space-y-4">
-                        <h3 className="text-2xl font-bold">Let's Connect</h3>
-                        <p className="text-foreground-muted text-pretty">
-                            새로운 프로젝트나 협업 기회에 관해 이야기하고 싶으시다면 언제든지 편하게 연락 주세요.
-                        </p>
-                    </div>
-
-                    {/* Right - Social Links */}
-                    <div className="space-y-4">
-                        <h3 className="text-xl font-semibold">Contact Me!</h3>
-                        <div className="flex gap-4">
-                            {git_url && (
-                                <a
-                                    href={git_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="p-3 bg-surface-elevated hover:bg-primary hover:text-background rounded-lg transition-all duration-200"
-                                    aria-label="GitHub"
-                                >
-                                    <Github className="w-6 h-6" />
-                                </a>
-                            )}
-                            {linkedin_url && (
-                                <a
-                                    href={linkedin_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="p-3 bg-surface-elevated hover:bg-primary hover:text-background rounded-lg transition-all duration-200"
-                                    aria-label="LinkedIn"
-                                >
-                                    <Linkedin className="w-6 h-6" />
-                                </a>
-                            )}
-                            {email && (
-                                <a
-                                    href={`mailto:${email}`}
-                                    className="p-3 bg-surface-elevated hover:bg-primary hover:text-background rounded-lg transition-all duration-200"
-                                    aria-label="Email"
-                                >
-                                    <Mail className="w-6 h-6" />
-                                </a>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Bottom */}
-                <div className="pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <p className="text-foreground-subtle text-sm">
-                        © {currentYear} Minseok. All rights reserved.
-                    </p>
-                    <p className="text-foreground-subtle text-sm flex items-center gap-1">
-                        Made with <Heart className="w-4 h-4 text-primary fill-primary" /> using React & Tailwind CSS
+        <footer id="contact" className="px-3 sm:px-6 pt-16 pb-6 flex flex-col gap-16">
+            <Reveal className="grid md:grid-cols-[minmax(0,1fr)_auto] gap-8 items-end">
+                <div className="flex flex-col gap-3">
+                    <p className="label text-muted-foreground">04 / Contact</p>
+                    <h2 className="font-display text-[clamp(56px,10vw,128px)] leading-[0.7] pt-2">Let's connect</h2>
+                    <p className="text-muted-foreground max-w-[50ch]">
+                        새로운 프로젝트나 협업 기회에 관해 이야기하고 싶으시다면 언제든지 편하게 연락 주세요.
                     </p>
                 </div>
+
+                {links.length > 0 && (
+                    <div className="flex flex-wrap gap-1 md:justify-end">
+                        {links.map((link) => (
+                            <a
+                                key={link.label}
+                                href={link.href}
+                                className="pill"
+                                {...(link.external && { target: "_blank", rel: "noopener noreferrer" })}
+                            >
+                                {link.label} <span className="arrow">↗</span>
+                            </a>
+                        ))}
+                    </div>
+                )}
+            </Reveal>
+
+            {/* Bottom */}
+            <div className="flex flex-col sm:flex-row justify-between gap-1">
+                <p className="label text-muted-foreground">© {currentYear} Minseok. All rights reserved.</p>
+                <p className="label text-muted-foreground">Built with React / Tailwind CSS / Django</p>
             </div>
         </footer>
     )

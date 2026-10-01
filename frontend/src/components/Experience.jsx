@@ -1,5 +1,5 @@
-"use client"
-import { Briefcase, Calendar } from "lucide-react"
+import Reveal from "./Reveal"
+
 const experiences = [
     {
         "id": 2,
@@ -33,82 +33,49 @@ const experiences = [
         "technologies": ["PHP (Laravel)", "MS SQL Server", "GitHub", "Docker"]
     }
 ]
+
 export default function Experience() {
     return (
-        <section id="experience" className="py-24 bg-background">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Section Header */}
-                <div className="space-y-4 mb-16">
-                    <div className="flex items-center gap-3">
-                        <Briefcase className="w-8 h-8 text-primary" />
-                        <h2 className="text-4xl sm:text-5xl font-bold text-balance ">Work Experience</h2>
-                    </div>
-                    <p className="text-lg text-muted-foreground max-w-2xl text-pretty">
-                        제가 이제까지 쌓아온 실무 경험과 성과를 소개합니다.
-                    </p>
-                </div>
+        <section id="experience" className="px-3 sm:px-6 py-16">
+            {/* Section Header */}
+            <Reveal className="flex flex-col gap-1 mb-12">
+                <p className="label text-muted-foreground">02 / Work experience</p>
+                <h2 className="text-[30px] leading-[1.13]">경력</h2>
+            </Reveal>
 
-                {/* Timeline */}
-                <div className="relative">
-                    {/* Timeline Line */}
-                    <div className="absolute left-0 md:left-8 top-0 bottom-0 w-0.5 bg-border hidden sm:block" />
+            <div className="flex flex-col gap-16">
+                {experiences.map((exp) => (
+                    <Reveal as="article" key={exp.id} className="grid md:grid-cols-[240px_minmax(0,1fr)] gap-3 md:gap-8">
+                        {/* Meta */}
+                        <div className="flex flex-col gap-1">
+                            <p className="label">{exp.period}</p>
+                            <p className="label text-muted-foreground">{exp.company}</p>
+                        </div>
 
-                    {/* Experience Items */}
-                    <div className="space-y-12">
-                        {experiences.map((exp) => (
-                            <div key={exp.id} className="relative">
-                                {/* Timeline Dot */}
-                                <div className="absolute left-0 md:left-8 -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background hidden sm:block" />
-
-                                {/* Content Card */}
-                                <div className="sm:ml-20 bg-surface rounded-xl border border-border p-6 md:p-8 hover:border-primary transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
-                                    {/* Header */}
-                                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-                                        <div className="space-y-2">
-                                            <h3 className="text-2xl font-bold text-foreground">{exp.position}</h3>
-                                            <p className="text-lg text-primary font-semibold">{exp.company}</p>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-muted-foreground">
-                                            <Calendar className="w-4 h-4" />
-                                            <span className="font-medium whitespace-nowrap">{exp.period}</span>
-                                        </div>
-                                    </div>
-
-                                    {/* Description */}
-                                    <p className="text-muted-foreground leading-relaxed mb-6">{exp.description}</p>
-
-                                    {/* Achievements */}
-                                    <div className="space-y-3 mb-6">
-                                        <h4 className="text-sm font-semibold text-subtle uppercase tracking-wider">주요 성과</h4>
-                                        <ul className="space-y-2">
-                                            {exp.achievements.map((achievement, idx) => (
-                                                <li key={idx} className="flex items-start gap-3">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                                                    <span className="text-muted-foreground leading-relaxed">{achievement}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-
-                                    {/* Technologies */}
-                                    <div className="space-y-3">
-                                        <h4 className="text-sm font-semibold text-subtle uppercase tracking-wider">사용 기술</h4>
-                                        <div className="flex flex-wrap gap-2">
-                                            {exp.technologies.map((tech) => (
-                                                <span
-                                                    key={tech}
-                                                    className="px-3 py-1.5 bg-surface-elevated text-primary text-sm font-medium rounded-lg border border-border"
-                                                >
-                                                    {tech}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
+                        {/* Content */}
+                        <div className="flex flex-col gap-4 max-w-[80ch]">
+                            <div className="flex flex-col gap-1">
+                                <h3 className="text-[30px] leading-[1.13]">{exp.position}</h3>
+                                <p className="text-muted-foreground">{exp.description}</p>
                             </div>
-                        ))}
-                    </div>
-                </div>
+
+                            <ul className="flex flex-col gap-2">
+                                {exp.achievements.map((achievement, idx) => (
+                                    <li key={idx} className="grid grid-cols-[32px_minmax(0,1fr)]">
+                                        <span className="label text-muted-foreground pt-0.5">{String(idx + 1).padStart(2, "0")}</span>
+                                        <span>{achievement}</span>
+                                    </li>
+                                ))}
+                            </ul>
+
+                            <ul className="flex flex-wrap gap-1" aria-label="사용 기술">
+                                {exp.technologies.map((tech) => (
+                                    <li key={tech} className="pill hover:bg-transparent hover:text-foreground">{tech}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    </Reveal>
+                ))}
             </div>
         </section>
     )
